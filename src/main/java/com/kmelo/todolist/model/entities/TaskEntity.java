@@ -21,21 +21,17 @@ public class TaskEntity {
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private String priority;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
     private UUID idUser;
 
     public TaskEntity() {}
 
-    public TaskEntity(String description, String title, LocalDateTime startAt, LocalDateTime endAt, String priority, LocalDateTime createdAt, UUID idUser) {
+    public TaskEntity(String description, String title, LocalDateTime startAt, LocalDateTime endAt, String priority, UUID idUser) {
         this.description = description;
         this.title = title;
         this.startAt = startAt;
         this.endAt = endAt;
         this.priority = priority;
         this.idUser = idUser;
-        this.createdAt = createdAt;
     }
 
     public UUID getId() {
