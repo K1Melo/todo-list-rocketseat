@@ -1,5 +1,6 @@
 package com.kmelo.todolist.controller;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.kmelo.todolist.model.entities.UserEntity;
 import com.kmelo.todolist.model.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User alredy exists");
         }
         else {
+            String password = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
+            user.setPassword(password);
+
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED).body("User Created -> " + user.getUsername());
         }

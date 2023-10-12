@@ -21,10 +21,12 @@ public class UserEntity {
     private LocalDateTime createdAt;
 
     public UserEntity(){}
-    public UserEntity(String username, String name, String password) {
+
+    public UserEntity(String username, String name, String password, LocalDateTime createdAt) {
         this.username = username;
         this.name = name;
         this.password = password;
+        this.createdAt = createdAt;
     }
 
     public UUID getId() {
@@ -53,5 +55,13 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
