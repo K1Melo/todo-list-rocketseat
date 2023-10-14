@@ -2,6 +2,7 @@ package com.kmelo.todolist.controller;
 
 import com.kmelo.todolist.model.entities.TaskEntity;
 import com.kmelo.todolist.model.repositories.TaskRepository;
+import com.kmelo.todolist.utils.Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -39,5 +41,14 @@ public class TaskController {
             taskRepository.save(task);
             return ResponseEntity.status(200).body(task);
         }
+    }
+
+    @PutMapping(path = "/{id}")
+    public TaskEntity update(@RequestBody TaskEntity task, @PathVariable UUID id, HttpServletRequest request) {
+
+        TaskEntity currentTask = this.taskRepository.findById(id).orElse(null);
+        Utils.copyNonNullProperties(task, currentTask);
+
+        return this.taskRepository.save(currentTask);
     }
 }
