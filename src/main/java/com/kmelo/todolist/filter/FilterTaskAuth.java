@@ -23,28 +23,35 @@ public class FilterTaskAuth extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String authorization = request.getHeader("Authorization");
+        String servletPath = request.getServletPath();
+        if(servletPath.equals("/tasks/")) {
+            String authorization = request.getHeader("Authorization");
 
-        String authorization_pass = authorization.substring("Basic".length()).trim();
+            String authorization_pass = authorization.substring("Basic".length()).trim();
 
-        byte[] pass_Decoded = Base64.getDecoder().decode(authorization_pass);
-        String user_pass = new String(pass_Decoded);
+            byte[] pass_Decoded = Base64.getDecoder().decode(authorization_pass);
+            String user_pass = new String(pass_Decoded);
 
-        String[] credentials = user_pass.split(":");
-        String user = credentials[0];
-        String password = credentials[1];
+            String[] credentials = user_pass.split(":");
+            String user = credentials[0];
+            String password = credentials[1];
 
-        UserEntity actualUser = this.userRepository.findByUsername(user);
+            UserEntity actualUser = this.userRepository.findByUsername(user);
 
-        if (actualUser == null) {
-            response.sendError(401);
-        } else {
-            BCrypt.Result verifyPass = BCrypt.verifyer().verify(password.toCharArray(), actualUser.getPassword());
-            if(verifyPass.verified) {
-                filterChain.doFilter(request, response);
-            } else {
+            if (actualUser == null) {
                 response.sendError(401);
+            } else {
+                BCrypt.Result verifyPass = BCrypt.verifyer().verify(password.toCharArray(), actualUser.getPassword());
+                if(verifyPass.verified) {
+                    request.setAttribute("idUser", actualUser.getId());
+                    filterChain.doFilter(request, response);
+                } else {
+                    response.sendError(401);
+                }
             }
+        } else {
+            filterChain.doFilter(request, response);
         }
+
     }
 }
