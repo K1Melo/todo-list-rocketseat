@@ -24,7 +24,7 @@ WORKDIR /data
 ENV JAVA_HOME /usr/lib/jvm/default-jvm/
 
 # Define default command.
-CMD ["mvn", "--version"]
+CMD ["mvn", "clean", "install"]
 RUN mvn clean install
 
 FROM openjdk:17-jdk-slim
