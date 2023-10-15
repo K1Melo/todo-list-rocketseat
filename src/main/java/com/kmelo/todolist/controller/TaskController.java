@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -44,11 +43,22 @@ public class TaskController {
     }
 
     @PutMapping(path = "/{id}")
-    public TaskEntity update(@RequestBody TaskEntity task, @PathVariable UUID id, HttpServletRequest request) {
+    public ResponseEntity update(@RequestBody TaskEntity task, @PathVariable UUID id, HttpServletRequest request) {
 
         TaskEntity currentTask = this.taskRepository.findById(id).orElse(null);
-        Utils.copyNonNullProperties(task, currentTask);
 
-        return this.taskRepository.save(currentTask);
+        if (currentTask == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tarefa não encontrada");
+        }
+
+        if (!currentTask.getIdUser().equals((request.getAttribute("idUser")))) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário sem permissão");
+        }
+
+        Utils.copyNonNullProperties(task, currentTask);
+        TaskEntity taskUpdated = this.taskRepository.save(currentTask);
+
+        return ResponseEntity.status(200).body(taskUpdated);
+
     }
 }
